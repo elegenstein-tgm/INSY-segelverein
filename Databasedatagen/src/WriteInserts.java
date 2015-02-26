@@ -12,30 +12,28 @@ import java.io.IOException;
  *
  */
 public class WriteInserts {
-	public WriteInserts(String[] colnames, String[] colvals, String tablename) {
-		String zzz = "Insert into \""+tablename+"\" (";
-		for(int i = 0; i < colnames.length; i++){
-			if(i != 0){
-				zzz +=", " +colnames[i];
-			}else{
+	public WriteInserts(String[] colnames, String[][] colvals, String tablename) {
+		String zzz = "INSERT INTO "+tablename+" ( ";
+		for(int i = 0 ; i < colnames.length; i ++){
+			if(i == 0)
 				zzz += colnames[i];
-			}
+			else
+				zzz += ", " + colnames[i];
 		}
-		zzz+=") Values (";
-		for(int i = 0; i < colvals.length; i++){
-			if(i != 0){
-				zzz+= ",(";
-			}
-			for(int j = 0; j < colnames.length; j++)
-			{
-				if(j != 0)
-					zzz+=", "+"'"+colvals[i]+"'";
+		zzz+=") VALUES ";
+		for(int i = 0; i < colvals[0].length; i ++){
+			if(i != 0)
+				zzz += ","; 
+			zzz += "(";
+			for( int u = 0; u < colnames.length;u ++){
+				if(u == 0)
+					zzz += colvals[u][i];
 				else
-					zzz+="'"+colvals[i]+"'";
-				i++;
+					zzz += ", " + colvals[u][i];
 			}
-			zzz+=")";
+			zzz += ")";
 		}
+		
 		System.out.println(zzz);
 		File abc = new File("insert_"+tablename+".sql");
 		try {
@@ -50,7 +48,6 @@ public class WriteInserts {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
+ 	}
 
 }

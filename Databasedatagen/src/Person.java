@@ -18,6 +18,7 @@ public class Person {
 	private ArrayList<String> vornamen  = new ArrayList<>();//200 names, 100 male-names + 100 female-names
 	private ArrayList<String> nachnamen = new ArrayList<>();//100 surename 
 	private ArrayList<String> names		= new ArrayList<>();
+	private ArrayList<String> dates 	= new ArrayList<>();
 	private String dsn;
 	private Connection con;
 
@@ -73,9 +74,14 @@ public class Person {
 		for(int i = 0; i< names.size(); i++)
 			System.out.println(names.get(i));
 	}
-	public String[] getp() {
-		String[] a = new String[20000];
-		a = names.toArray(a);
+	public final String SQLRANDDATE ="(select date(now() - trunc(random()  * 18250) * '1 day'::interval))";	
+	
+	public String[][] getp() {
+		String[][] a = new String[2][20000];
+		a[0] = names.toArray(a[0]);
+		for(int i = 0; i < a[0].length; i++){
+			a[1][i] = SQLRANDDATE;
+		}
 
 		return a;
 	}
