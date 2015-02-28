@@ -27,14 +27,15 @@ public class WriteInserts {
 			zzz += "(";
 			for( int u = 0; u < colnames.length;u ++){
 				if(u == 0)
-					zzz += colvals[u][i];
+					zzz += "'"+colvals[u][i]+"'";
 				else
-					zzz += ", " + colvals[u][i];
+					zzz += ", " + colvals[u][i]+"";/// Need some ' but in this case its a function call! so 1 would be not productive
 			}
 			zzz += ")";
 		}
-		
+		String zzz1 = zzz.substring(zzz.length()/2);
 		System.out.println(zzz);
+		System.out.println(zzz1);
 		File abc = new File("insert_"+tablename+".sql");
 		try {
 			if(!abc.exists())
@@ -48,6 +49,7 @@ public class WriteInserts {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
  	}
 
 }
