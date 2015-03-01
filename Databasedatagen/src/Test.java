@@ -15,7 +15,9 @@ public class Test {
 //		Person p = new Person("jdbc:postgresql://192.168.142.129/namegenerator?user=erik&password=abcc1233");
 //		genPerson(p);
 //		genTrainerSegler();
-		genBoot();
+//		genBoot();
+//		genSubBoot();
+		genMannschaft();
 	}
 	
 	public static void genBoot() {
@@ -25,7 +27,18 @@ public class Test {
 		new WriteInserts(new String[]{"name","personen","tiefgang"},p[0],"boot");
 	}
 	
+	public static void genMannschaft() {
+		Mannschaft m = new Mannschaft();
+		new WriteInserts(new String[]{"name","aklasse", "key"},m.getm()[0],"mannschaft");
+	}
 	
+	public static void genSubBoot() {
+		Subboats b = new Subboats();
+		String[][][] p =b.getb();
+
+		new WriteInserts(new String[]{"id","segelflaeche"},p[1],"sportboot");
+		new WriteInserts(new String[]{"id","bootsklasse"},p[0],"tourenboot");
+	}
 	
 	public static void genTrainerSegler() {
 		String[][][] person_subs = new String[2][1][10000];

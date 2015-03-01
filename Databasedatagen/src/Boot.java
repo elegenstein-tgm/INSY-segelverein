@@ -25,12 +25,6 @@ public class Boot {
 			blub[0][1][i]= SQL_PERSON_RAND;
 			blub[0][2][i]= SQL_BOAT_DEPTH_RAND;
 		}
-		/**
-		for( int i = 0; i < 10000; i++){
-			blub[1][1][i]= SQL_PERSON_RAND;
-			blub[1][2][i]= SQL_BOAT_DEPTH_RAND;
-		}
-		**/
 		return blub;
 	}
 }
