@@ -17,7 +17,8 @@ public class Test {
 //		genTrainerSegler();
 //		genBoot();
 //		genSubBoot();
-		genMannschaft();
+//		genMannschaft();
+//		genRegatta();
 	}
 	
 	public static void genBoot() {
@@ -26,12 +27,23 @@ public class Test {
 		String[][][] p =b.getb();
 		new WriteInserts(new String[]{"name","personen","tiefgang"},p[0],"boot");
 	}
+	/**
+	 * requires inserted Regatta
+	 */
+	public static void genWettfahrt(){
+		Wettfahrt f = new Wettfahrt();
+		f.dos();
+		new WriteInserts(new String[]{"name","jahr","land","datum","laenge"}, f.getw()[0], "wettfahrt");
+	}
 	
 	public static void genMannschaft() {
 		Mannschaft m = new Mannschaft();
 		new WriteInserts(new String[]{"name","aklasse", "key"},m.getm()[0],"mannschaft");
 	}
-	
+	public static void genRegatta() {
+		Regatta m = new Regatta();
+		new WriteInserts(new String[]{"name","jahr", "land"},m.getr()[0],"regatta");
+	}
 	public static void genSubBoot() {
 		Subboats b = new Subboats();
 		String[][][] p =b.getb();
