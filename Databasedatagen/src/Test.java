@@ -18,7 +18,7 @@ public class Test {
 //		genBoot();
 //		genSubBoot();
 //		genMannschaft();
-//		genRegatta();
+		genRegatta();
 	}
 	
 	public static void genBoot() {

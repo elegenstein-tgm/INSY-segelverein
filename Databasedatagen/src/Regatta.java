@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  */
 public class Regatta {
-	public static final String[] name=new String[]{"Bodensee", "Zauchensee", "Wolfgangsee", "Mondsee","Wörthersee", "Donau", "Wakkensee", "Inn","Gardersee", "Erikson"};
+	public static final String[] name=new String[]{"Bodensee", "Zauchensee", "Wolfgangsee", "Mondsee","Woerthersee", "Donau", "Wakkensee", "Inn","Gardersee", "Erikson"};
 	private ArrayList<String> jahr = new ArrayList<>();
 	public static final String[] land = new String[]{"Oesterreich","Deutschland","Italien","Europa","WasWeissIch"};
 	
