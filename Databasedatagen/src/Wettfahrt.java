@@ -72,12 +72,11 @@ public class Wettfahrt {
 		}
 	}
 	public String[][][] getw() {
-		String[][][] tmp = new String[1][5][10000];
+		String[][][] tmp = new String[1][4][10000];
 		tmp[0][0]=name.toArray(tmp[0][0]);
 		tmp[0][1]=jahr.toArray(tmp[0][1]);
-		tmp[0][2]=land.toArray(tmp[0][2]);
-		tmp[0][3]=datum.toArray(tmp[0][3]);
-		tmp[0][4]=laenge.toArray(tmp[0][4]);
+		tmp[0][2]=datum.toArray(tmp[0][2]);
+		tmp[0][3]=laenge.toArray(tmp[0][3]);
 		return tmp;
 	}
 

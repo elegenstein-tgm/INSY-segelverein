@@ -34,7 +34,7 @@ public class Test {
 	public static void genWettfahrt(){
 		Wettfahrt f = new Wettfahrt();
 		f.dos();
-		new WriteInserts(new String[]{"name","jahr","land","datum","laenge"}, f.getw()[0], "wettfahrt");
+		new WriteInserts(new String[]{"name","jahr","datum","laenge"}, f.getw()[0], "wettfahrt");
 	}
 	
 	public static void genMannschaft() {
