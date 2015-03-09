@@ -28,7 +28,7 @@ public class Wettfahrt {
 	 * @param dsn "jdbc:postgresql://localhost/test?user=fred&password=secret&ssl=true"
 	 */
 	public void dos(){
-		collectData("jdbc:postgresql://localhost/test?user=erik&password=adcc1233&ssl=true");
+		collectData("jdbc:postgresql://10.0.104.40/segelverein?user=erik&password=abcc1233");
 		generate();
 	}
 	private void collectData(String dsn){
@@ -61,9 +61,11 @@ public class Wettfahrt {
 				for(int d = 1; d < 28; d++){
 					String mm ="", dd="";
 					if(m < 10)
-						mm += "0"+m;
+						mm += "0";
 					if(d < 10)
-						dd+="0"+d;
+						dd+="0";
+					mm+=m;
+					dd+=d;
 					datum.add("'"+jahr.get(i)+"-"+mm+"-"+dd+"'");
 				}
 			laenge.add(""+(i+1));
