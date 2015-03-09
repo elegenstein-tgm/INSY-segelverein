@@ -40,7 +40,7 @@ public class Wettfahrt {
 			java.sql.Statement st= con.createStatement();
 			ResultSet rs = st.executeQuery("select * from regatta");
 			while (rs.next()) {
-				name.add("'"+rs.getString(1)+"'");
+				name.add(""+rs.getString(1)+"");
 				jahr.add(rs.getString(2));
 				land.add("'"+rs.getString(3)+"'");
 			}
