@@ -19,7 +19,31 @@ public class Test {
 //		genSubBoot();
 //		genMannschaft();
 //		genRegatta();
-		genWettfahrt();
+//		genWettfahrt();
+//		genBildet();
+//		genZugewiesen();
+		genNT();
+		
+	}
+	/**
+	 * requires inserted Mannschaft
+	 */
+	
+	public static void genNT() {
+		NimmtTeil nt = new NimmtTeil();
+		nt.dos();
+		new WriteInserts(new String[]{"mname","rname","rjahr","sportboot","startnr"}, nt.getnt()[0], "nimmt_teil");
+	}
+	
+	public static void genZugewiesen(){
+		Zugewiesen z = new Zugewiesen();
+		z.dos();
+		new WriteInserts(new String[]{"id","name"}, z.getz()[0], "zugewiesen");
+	}
+	public static void genBildet(){
+		Bildet b = new Bildet();
+		b.dos();
+		new WriteInserts(new String[]{"key","name",},b.getb()[0],"bildet");
 	}
 	
 	public static void genBoot() {
