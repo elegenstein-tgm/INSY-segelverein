@@ -67,8 +67,6 @@ public class NimmtTeil {
 				j++;
 				i++;
 			}
-
-
 		return tmp;
 	}
 }

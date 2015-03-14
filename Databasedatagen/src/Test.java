@@ -22,12 +22,19 @@ public class Test {
 //		genWettfahrt();
 //		genBildet();
 //		genZugewiesen();
-		genNT();
+//		genNT();
+		genErzielt();
 		
 	}
 	/**
 	 * requires inserted Mannschaft
 	 */
+	
+	public static void genErzielt() {
+		Erzielt e = new Erzielt();
+		e.dos();
+		new WriteInserts(new String[]{"mname","wname","wjahr","wdatum","punkte"}, e.gete()[0], "erzielt");
+	}
 	
 	public static void genNT() {
 		NimmtTeil nt = new NimmtTeil();

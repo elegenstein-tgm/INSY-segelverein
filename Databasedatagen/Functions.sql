@@ -14,3 +14,24 @@ begin
   return result;
 end;
 $$ language plpgsql;
+
+ CREATE OR REPLACE FUNCTION upsert(sql_insert text, sql_update text)
+
+ RETURNS void AS
+ $BODY$
+ BEGIN
+    -- first try to insert and after to update. Note : insert has pk and update not...
+
+    EXECUTE sql_insert;
+    RETURN;
+    EXCEPTION WHEN unique_violation THEN
+    EXECUTE sql_update; 
+    IF FOUND THEN 
+        RETURN; 
+    END IF;
+ END;
+ $BODY$
+ LANGUAGE plpgsql VOLATILE
+ COST 100;
+ ALTER FUNCTION upsert(text, text)
+ OWNER TO postgres;
