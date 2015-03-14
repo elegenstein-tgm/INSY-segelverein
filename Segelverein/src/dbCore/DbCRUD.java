@@ -79,5 +79,18 @@ public class DbCRUD {
 		return names;
 	}
 	
+	public int getVersion(String tablename){
+		int i = -1;
+		try {
+			ResultSet rs = con.createStatement().executeQuery("Select version from version where name Like '"+tablename+"'");
+			while(rs.next()){
+				i = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return i;
+	}
 	
 }

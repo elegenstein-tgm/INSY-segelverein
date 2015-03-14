@@ -24,18 +24,13 @@ public class MainFrame extends JFrame {
 	private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	private JPanel contentPane;
 	private JTable[] tables;
-	public String[] tablenames ; 
+	public String[] tablenames;
 	private JTable table;
 	int activeTab = 0;
 	private JLabel lblNewLabel;
-	
-	public JTable[] getTables() {
-		return tables;
-	}
-
-	public void setTables(JTable[] tables) {
-		this.tables = tables;
-	}
+	private DbCRUD crud = new DbCRUD(
+			"jdbc:postgresql://192.168.5.3/segelverein?user=erik&password=abcc1233");
+	private Versioner vers;
 
 	/**
 	 * Launch the application.
@@ -44,8 +39,11 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					//					MainFrame frame = new MainFrame();
-					MainFrame frame = new MainFrame(new String[]{"boot","bildet","mannschaft","nimmt_teil","person","regatta","sportboot","tourenboot","wettfahrt","zugewiesen","erzielt"});
+					// MainFrame frame = new MainFrame();
+					MainFrame frame = new MainFrame(new String[] { "boot",
+							"bildet", "mannschaft", "nimmt_teil", "person",
+							"regatta", "sportboot", "tourenboot", "wettfahrt",
+							"zugewiesen", "erzielt" });
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,7 +52,7 @@ public class MainFrame extends JFrame {
 		});
 	}
 
-	public MainFrame(String[] tmp){
+	public MainFrame(String[] tmp) {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 667, 541);
@@ -64,8 +62,10 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 		tablenames = tmp;
 		tables = new JTable[tablenames.length];
+		vers = new Versioner();
 		fillTabs();
 	}
+
 	/**
 	 * Create the frame.
 	 */
@@ -82,51 +82,49 @@ public class MainFrame extends JFrame {
 		contentPane.add(tabbedPane_1, BorderLayout.NORTH);
 
 		table = new JTable();/*
-				table.addComponentListener(new ComponentAdapter() {
-					@Override
-					public void componentShown(ComponentEvent arg0) {
-						System.out.println("tab1");
-					}
-				});*/
+							 * table.addComponentListener(new ComponentAdapter()
+							 * {
+							 * 
+							 * @Override public void
+							 * componentShown(ComponentEvent arg0) {
+							 * System.out.println("tab1"); } });
+							 */
 		table.setToolTipText("boot");
 		tabbedPane_1.addTab("1", null, table, null);
-		table.setModel(new DefaultTableModel(
-				new Object[][] {
-						{"bring", null, null, null, null, null, null, null, null},
-						{null, null, null, null, "sucks", null, null, null, null},
-				},
-				new String[] {
-						"New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column"
-				}
-				));
+		table.setModel(new DefaultTableModel(new Object[][] {
+				{ "bring", null, null, null, null, null, null, null, null },
+				{ null, null, null, null, "sucks", null, null, null, null }, },
+				new String[] { "New column", "New column", "New column",
+						"New column", "New column", "New column", "New column",
+						"New column", "New column" }));
 		System.out.println(table.getModel().getColumnName(9));
 		lblNewLabel = new JLabel("New label");
 		tabbedPane_1.addTab("New tab", null, lblNewLabel, null);
 
 	}
 
-	
-	public void updateActualTab(){
-		
+	public void updateTab() {
+
 	}
-	
-	private void fillTabs(){
-		DbCRUD crud = new DbCRUD("jdbc:postgresql://192.168.5.3/segelverein?user=erik&password=abcc1233");
-		for(int i = 0; i < tablenames.length; i++){
-			String[] colnames = crud.getColNamesForSelect("Select * from "+tablenames[i]);
+
+	private void fillTabs() {
+		for (int i = 0; i < tablenames.length; i++) {
+			String[] colnames = crud.getColNamesForSelect("Select * from "
+					+ tablenames[i]);
 			tables[i] = new JTable();
 			tables[i].setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tables[i].setModel(new DefaultTableModel(crud.selectALL(tablenames[i]),colnames));
+			tables[i].setModel(new DefaultTableModel(crud
+					.selectALL(tablenames[i]), colnames));
 			DefaultTableModel model = (DefaultTableModel) tables[i].getModel();
-			model.addRow(new String[]{});
+			model.addRow(new String[] {});
 			model.addTableModelListener(new MyTableListener());
 			JScrollPane JSP = new JScrollPane(tables[i]);
 			JPanel deleUpdate = new JPanel(new BorderLayout());
-			
+
 			JButton btnSaveChanges = new JButton("Delete row");
 			JButton btnUpdate = new JButton("Force Update");
-			// Add Listeners 
-			
+			// Add Listeners
+
 			deleUpdate.add(btnUpdate, BorderLayout.WEST);
 			deleUpdate.add(btnSaveChanges, BorderLayout.EAST);
 			contentPane.add(tabbedPane, BorderLayout.NORTH);
@@ -136,8 +134,11 @@ public class MainFrame extends JFrame {
 				@Override
 				public void stateChanged(ChangeEvent arg0) {
 					if (arg0.getSource() instanceof JTabbedPane) {
-						System.out.println("Tab.No." + ((JTabbedPane)arg0.getSource()).getSelectedIndex());
-						activeTab = ((JTabbedPane)arg0.getSource()).getSelectedIndex();
+						System.out.println("Tab.No."
+								+ ((JTabbedPane) arg0.getSource())
+										.getSelectedIndex());
+						activeTab = ((JTabbedPane) arg0.getSource())
+								.getSelectedIndex();
 					}
 
 				}
@@ -145,22 +146,46 @@ public class MainFrame extends JFrame {
 		}
 
 	}
-	public class MyTableListener implements TableModelListener{
-		/* (non-Javadoc)
-		 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+
+	public class MyTableListener implements TableModelListener {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * javax.swing.event.TableModelListener#tableChanged(javax.swing.event
+		 * .TableModelEvent)
 		 */
 		@Override
 		public void tableChanged(TableModelEvent e) {
-			int row, col ;
-			col =e.getColumn();
+			int row, col;
+			col = e.getColumn();
 			row = e.getFirstRow();
-			if(row == (tables[tabbedPane.getSelectedIndex()].getRowCount()-1)){
-				//Insert
-			}else{
-				//Update
+			if (row == (tables[tabbedPane.getSelectedIndex()].getRowCount() - 1)) {
+				// Insert
+			} else {
+				// Update
 			}
 		}
 	}
 
+	public class Versioner {
+		int[] versions = new int[tablenames.length];
+
+		public void getCheckFill(int table) {
+			if (crud.getVersion(tablenames[table]) == versions[table]) {
+				return;
+			} else {
+				updateDataModel(table);
+			}
+		}
+
+		private void updateDataModel(int table) {
+			tables[table].setModel(new DefaultTableModel(crud
+					.selectALL(tablenames[table]),  crud.getColNamesForSelect("Select * from "
+							+ tablenames[table])));
+			((DefaultTableModel)tables[table].getModel()).addRow(new String[]{});
+			tables[table].getModel().addTableModelListener(new MyTableListener());
+		}
+	}
 
 }
