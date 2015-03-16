@@ -15,6 +15,8 @@ import java.util.ArrayList;
  * Versioning Table -> versions 
  */
 
+import javax.swing.JOptionPane;
+
 /**
  * @author Erik
  *
@@ -45,7 +47,7 @@ public class DbCRUD {
 		ArrayList<String[]> bettBlocka = new ArrayList<>();
 		try {
 			ResultSet rs = con.createStatement().executeQuery(
-					"SELECT * FROM " + tablename);
+					"SELECT * FROM " + tablename +" order by (1)");
 			while (rs.next()) {
 				String[] tmp = new String[rs.getMetaData().getColumnCount()];
 				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
@@ -62,7 +64,7 @@ public class DbCRUD {
 
 		return zzz;
 	}
-	
+
 	public String[] getColNamesForSelect(String selectsql) {
 		String[] names = null;
 		try {
@@ -78,7 +80,7 @@ public class DbCRUD {
 		}
 		return names;
 	}
-	
+
 	public int getVersion(String tablename){
 		int i = -1;
 		try {
@@ -92,5 +94,96 @@ public class DbCRUD {
 		}
 		return i;
 	}
-	
+	public void deleteRow(String table, String[][] where){
+		String sql = "Delete from "+table+" Where ";
+		for(int i = 0; i < where.length; i++){
+			String LikeOrIs=" LIKE '";
+			if(isNumber(where[i][1]))
+				LikeOrIs ="=";
+
+			sql += "\""+where[i][0]+"\"" + LikeOrIs +where[i][1];
+			if(!isNumber(where[i][1]))
+				sql += "'";
+
+			if(i != where.length-1){
+				sql += " AND ";
+			}
+		}
+		try {
+			con.setAutoCommit(false);
+			con.createStatement().execute(sql);
+			ResultSet rs = con.createStatement().executeQuery("select version from version where name like '"+table+"'");
+			rs.next();
+			int i = rs.getInt(1);
+			con .createStatement().executeUpdate("Update version " +"set version = "+(i+1)+" where \"name\" like '"+table+"'");
+			con.commit();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			System.err.println("Update version where \"name\" like '"+table+"' set version = ");
+			System.err.println(sql);
+		}
+	}
+	/**
+	 * 
+	 */
+	public void update(String table, String[][] colsAndVals,int changedcol) {
+		 String sql ="Update "+table+" SET "+colsAndVals[changedcol][0];
+		 if(isNumber(colsAndVals[changedcol][1]))
+			 sql += "="+colsAndVals+" ";
+		 else
+			 sql += " Like '" + colsAndVals[changedcol][1]+"' ";
+		 
+		 sql += "Where ";
+		 
+		 for(int i = 0; i < colsAndVals.length; i++){
+			 if(i != changedcol){
+				 sql += colsAndVals[i][0];
+				 if(isNumber(colsAndVals[i][1])){
+					 sql += "=" + colsAndVals[i][1];
+				 }else{
+					 sql += " Like '"+colsAndVals[i][1]+"'";
+				 }
+			 }
+		 }
+
+	}
+	/**
+	 * 
+	 */
+	public void insert(String table, String[] Vals) {
+		String sql = "";
+		sql += "insert into "+table+" VALUES (";
+		for(int i = 0 ; i < Vals.length; i++){
+			if(isNumber(Vals[i])){
+				sql+=Vals[i];
+			}else{
+				sql+="'"+Vals[i]+"'";	
+			}
+			if(i != Vals.length-1){
+				sql+=",";
+			}
+		}
+		sql += ")";
+		try {
+			con.createStatement().execute(sql);
+			ResultSet rs = con.createStatement().executeQuery("Select version from version where name like '"+table+"'");
+			rs.next();
+			int vers = rs.getInt(1);
+			con.createStatement().executeUpdate("Update version set version = "+ (vers+1)+" where name like '"+table+"'");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}	
+
+	public static boolean isNumber(String text){
+		boolean parsable = true;
+		try{
+			Double.parseDouble(text);
+		}catch(NumberFormatException e){
+			parsable = false;
+		}
+		return parsable;
+	}
+
 }

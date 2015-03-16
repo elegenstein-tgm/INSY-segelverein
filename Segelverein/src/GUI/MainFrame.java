@@ -2,10 +2,12 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -25,12 +27,9 @@ public class MainFrame extends JFrame {
 	private JPanel contentPane;
 	private JTable[] tables;
 	public String[] tablenames;
-	private JTable table;
 	int activeTab = 0;
-	private JLabel lblNewLabel;
-	private DbCRUD crud = new DbCRUD(
-			"jdbc:postgresql://192.168.5.3/segelverein?user=erik&password=abcc1233");
-	private Versioner vers;
+	public DbCRUD crud = new DbCRUD("jdbc:postgresql://192.168.5.3/segelverein?user=erik&password=abcc1233");
+	public Versioner vers;
 
 	/**
 	 * Launch the application.
@@ -41,7 +40,7 @@ public class MainFrame extends JFrame {
 				try {
 					// MainFrame frame = new MainFrame();
 					MainFrame frame = new MainFrame(new String[] { "boot",
-							"bildet", "mannschaft", "nimmt_teil", "person",
+							"bildet", "mannschaft", "nimmt_teil", "person","trainer","segler",
 							"regatta", "sportboot", "tourenboot", "wettfahrt",
 							"zugewiesen", "erzielt" });
 					frame.setVisible(true);
@@ -62,71 +61,34 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 		tablenames = tmp;
 		tables = new JTable[tablenames.length];
-		vers = new Versioner();
 		fillTabs();
+		vers = new Versioner();
+
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public MainFrame() {
-		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 667, 511);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
-
-		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
-		contentPane.add(tabbedPane_1, BorderLayout.NORTH);
-
-		table = new JTable();/*
-							 * table.addComponentListener(new ComponentAdapter()
-							 * {
-							 * 
-							 * @Override public void
-							 * componentShown(ComponentEvent arg0) {
-							 * System.out.println("tab1"); } });
-							 */
-		table.setToolTipText("boot");
-		tabbedPane_1.addTab("1", null, table, null);
-		table.setModel(new DefaultTableModel(new Object[][] {
-				{ "bring", null, null, null, null, null, null, null, null },
-				{ null, null, null, null, "sucks", null, null, null, null }, },
-				new String[] { "New column", "New column", "New column",
-						"New column", "New column", "New column", "New column",
-						"New column", "New column" }));
-		System.out.println(table.getModel().getColumnName(9));
-		lblNewLabel = new JLabel("New label");
-		tabbedPane_1.addTab("New tab", null, lblNewLabel, null);
-
-	}
-
-	public void updateTab() {
-
-	}
 
 	private void fillTabs() {
 		for (int i = 0; i < tablenames.length; i++) {
-			String[] colnames = crud.getColNamesForSelect("Select * from "
-					+ tablenames[i]);
 			tables[i] = new JTable();
 			tables[i].setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tables[i].setModel(new DefaultTableModel(crud
-					.selectALL(tablenames[i]), colnames));
-			DefaultTableModel model = (DefaultTableModel) tables[i].getModel();
-			model.addRow(new String[] {});
-			model.addTableModelListener(new MyTableListener());
 			JScrollPane JSP = new JScrollPane(tables[i]);
-			JPanel deleUpdate = new JPanel(new BorderLayout());
+			JPanel deleUpdate = new JPanel(new FlowLayout());
 
-			JButton btnSaveChanges = new JButton("Delete row");
-			JButton btnUpdate = new JButton("Force Update");
+			JButton btnSaveChanges 	= new JButton("Save Changes");
+			JButton btnDeleteRow 	= new JButton("Delete row");
+			JButton btnUpdate 		= new JButton("Force Update / Cancel");
 			// Add Listeners
-
-			deleUpdate.add(btnUpdate, BorderLayout.WEST);
-			deleUpdate.add(btnSaveChanges, BorderLayout.EAST);
+			btnDeleteRow.setActionCommand("Delete");
+			btnDeleteRow.addActionListener(new BtnListener());
+			
+			
+			
+			deleUpdate.add(btnUpdate);
+			deleUpdate.add(btnSaveChanges);
+			deleUpdate.add(btnDeleteRow);
 			contentPane.add(tabbedPane, BorderLayout.NORTH);
 			contentPane.add(deleUpdate, BorderLayout.SOUTH);
 			tabbedPane.addTab(tablenames[i], null, JSP, null);
@@ -134,9 +96,10 @@ public class MainFrame extends JFrame {
 				@Override
 				public void stateChanged(ChangeEvent arg0) {
 					if (arg0.getSource() instanceof JTabbedPane) {
-						System.out.println("Tab.No."
+						/*System.out.println("Tab.No."
 								+ ((JTabbedPane) arg0.getSource())
 										.getSelectedIndex());
+						 */
 						activeTab = ((JTabbedPane) arg0.getSource())
 								.getSelectedIndex();
 					}
@@ -158,18 +121,48 @@ public class MainFrame extends JFrame {
 		@Override
 		public void tableChanged(TableModelEvent e) {
 			int row, col;
+			System.out.println("Table changed");
 			col = e.getColumn();
 			row = e.getFirstRow();
+			
 			if (row == (tables[tabbedPane.getSelectedIndex()].getRowCount() - 1)) {
 				// Insert
+				String zzz = "";
+				System.out.print("insert into "+tablenames[tabbedPane.getSelectedIndex()]+" VALUES (");
+				for(int i = 0; i < ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getColumnCount();i++)
+					zzz+=((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getValueAt(row, i);
+				
+				String s[] = new String[((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getColumnCount()];
+				for(int i = 0; i < ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getColumnCount();i++)
+					s[i]= (String) ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getValueAt(row, i);
+				if(!zzz.contains("null")){
+					System.err.println("INSERT");
+					crud.insert(tablenames[activeTab], s);
+				}
 			} else {
-				// Update
+				String[][] s = new String[((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getColumnCount()][2];
+				for(int i  = 0; i < s.length; i++){
+					s[i][0] = ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getColumnName(i);
+					s[i][1] = (String) ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getValueAt(row, i);
+//					System.err.println(s[i][0]+" "+s[i][1]);
+					
+				}
 			}
 		}
 	}
 
 	public class Versioner {
 		int[] versions = new int[tablenames.length];
+
+		/**
+		 * 
+		 */
+		public Versioner() {
+			for (int i = 0; i < versions.length; i++) {
+				versions[i] = -1;
+				getCheckFill(i);
+			}
+		}
 
 		public void getCheckFill(int table) {
 			if (crud.getVersion(tablenames[table]) == versions[table]) {
@@ -187,5 +180,22 @@ public class MainFrame extends JFrame {
 			tables[table].getModel().addTableModelListener(new MyTableListener());
 		}
 	}
+	public class BtnListener implements ActionListener{
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getActionCommand().equals("Delete")){
+				String[][] kp = new String[((DefaultTableModel)tables[activeTab].getModel()).getColumnCount()][2];
+				for(int i = 0; i < ((DefaultTableModel)tables[activeTab].getModel()).getColumnCount(); i++){
+					kp[i][0] = tables[activeTab].getColumnName(i);
+					kp[i][1] = (String) tables[activeTab].getValueAt(tables[activeTab].getSelectedRow(), i);
+				}
+				crud.deleteRow(tablenames[activeTab], kp);
+			}
+		}
+		
+	}
 }
