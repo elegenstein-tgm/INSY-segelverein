@@ -38,7 +38,7 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					// MainFrame frame = new MainFrame();
+//					 MainFrame frame = new MainFrame();
 					MainFrame frame = new MainFrame(new String[] { "boot",
 							"bildet", "mannschaft", "nimmt_teil", "person","trainer","segler",
 							"regatta", "sportboot", "tourenboot", "wettfahrt",
@@ -63,6 +63,8 @@ public class MainFrame extends JFrame {
 		tables = new JTable[tablenames.length];
 		fillTabs();
 		vers = new Versioner();
+		Aktualize e = new Aktualize();
+		e.start();
 
 	}
 
@@ -75,20 +77,20 @@ public class MainFrame extends JFrame {
 			tables[i] = new JTable();
 			tables[i].setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			JScrollPane JSP = new JScrollPane(tables[i]);
-			JPanel deleUpdate = new JPanel(new FlowLayout());
+			JPanel deleUpdate = new JPanel(new BorderLayout());
 
-			JButton btnSaveChanges 	= new JButton("Save Changes");
+			
 			JButton btnDeleteRow 	= new JButton("Delete row");
 			JButton btnUpdate 		= new JButton("Force Update / Cancel");
 			// Add Listeners
 			btnDeleteRow.setActionCommand("Delete");
 			btnDeleteRow.addActionListener(new BtnListener());
+			btnUpdate.setActionCommand("Update");
+			btnUpdate.addActionListener(new BtnListener());
 			
 			
-			
-			deleUpdate.add(btnUpdate);
-			deleUpdate.add(btnSaveChanges);
-			deleUpdate.add(btnDeleteRow);
+			deleUpdate.add(btnUpdate,BorderLayout.WEST);
+			deleUpdate.add(btnDeleteRow,BorderLayout.EAST);
 			contentPane.add(tabbedPane, BorderLayout.NORTH);
 			contentPane.add(deleUpdate, BorderLayout.SOUTH);
 			tabbedPane.addTab(tablenames[i], null, JSP, null);
@@ -145,8 +147,8 @@ public class MainFrame extends JFrame {
 					s[i][0] = ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getColumnName(i);
 					s[i][1] = (String) ((DefaultTableModel)tables[tabbedPane.getSelectedIndex()].getModel()).getValueAt(row, i);
 //					System.err.println(s[i][0]+" "+s[i][1]);
-					
 				}
+				crud.update(tablenames[activeTab], s, col);
 			}
 		}
 	}
@@ -163,16 +165,16 @@ public class MainFrame extends JFrame {
 				getCheckFill(i);
 			}
 		}
-
 		public void getCheckFill(int table) {
 			if (crud.getVersion(tablenames[table]) == versions[table]) {
 				return;
 			} else {
 				updateDataModel(table);
+				versions[table]= crud.getVersion(tablenames[table]);
 			}
 		}
 
-		private void updateDataModel(int table) {
+		public void updateDataModel(int table) {
 			tables[table].setModel(new DefaultTableModel(crud
 					.selectALL(tablenames[table]),  crud.getColNamesForSelect("Select * from "
 							+ tablenames[table])));
@@ -194,8 +196,32 @@ public class MainFrame extends JFrame {
 					kp[i][1] = (String) tables[activeTab].getValueAt(tables[activeTab].getSelectedRow(), i);
 				}
 				crud.deleteRow(tablenames[activeTab], kp);
+				return;
+			}
+			if(e.getActionCommand().equals("Update")){
+				vers.updateDataModel(activeTab);
+				return;
 			}
 		}
 		
+	}
+	
+	public class Aktualize extends Thread{
+		public boolean runns = true;
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
+		@Override
+		public void run() {
+			while(runns){
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				vers.getCheckFill(activeTab);
+			}
+		}
 	}
 }

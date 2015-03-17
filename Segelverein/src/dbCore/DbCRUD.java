@@ -127,24 +127,46 @@ public class DbCRUD {
 	 * 
 	 */
 	public void update(String table, String[][] colsAndVals,int changedcol) {
-		 String sql ="Update "+table+" SET "+colsAndVals[changedcol][0];
-		 if(isNumber(colsAndVals[changedcol][1]))
-			 sql += "="+colsAndVals+" ";
-		 else
-			 sql += " Like '" + colsAndVals[changedcol][1]+"' ";
-		 
-		 sql += "Where ";
-		 
-		 for(int i = 0; i < colsAndVals.length; i++){
-			 if(i != changedcol){
-				 sql += colsAndVals[i][0];
-				 if(isNumber(colsAndVals[i][1])){
-					 sql += "=" + colsAndVals[i][1];
-				 }else{
-					 sql += " Like '"+colsAndVals[i][1]+"'";
-				 }
-			 }
-		 }
+		String sql ="Update "+table+" SET "+colsAndVals[changedcol][0];
+		if(isNumber(colsAndVals[changedcol][1]))
+			sql += "="+colsAndVals[changedcol][1]+" ";
+		else
+			sql += " = '" + colsAndVals[changedcol][1]+"' ";
+
+		sql += "Where ";
+		for(int i = 0; i < colsAndVals.length; i++){
+			if(i != changedcol){
+				sql += colsAndVals[i][0];
+				if(isNumber(colsAndVals[i][1])){
+					sql += "=" + colsAndVals[i][1];
+				}else{
+					sql += " Like '"+colsAndVals[i][1]+"'";
+				}
+				sql+=" ";
+				if(i != colsAndVals.length-1)
+					sql += "And ";
+			}
+			
+		}
+
+		try {
+			con.setAutoCommit(false);
+//			System.err.println(sql);
+			con.createStatement().execute(sql);
+			
+			ResultSet rs = con.createStatement().executeQuery("Select version from version where name like '"+table+"'");
+//			System.err.println("Select version from version where name like '"+table+"'");
+			rs.next();
+			int vers = rs.getInt(1);
+			con.createStatement().executeUpdate("Update version set version = "+ (vers+1)+" where name like '"+table+"'");
+//			System.err.println("Update version set version = "+ (vers+1)+" where name like '"+table+"'");
+			con.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 
 	}
 	/**
@@ -165,11 +187,13 @@ public class DbCRUD {
 		}
 		sql += ")";
 		try {
+			con.setAutoCommit(false);
 			con.createStatement().execute(sql);
 			ResultSet rs = con.createStatement().executeQuery("Select version from version where name like '"+table+"'");
 			rs.next();
 			int vers = rs.getInt(1);
 			con.createStatement().executeUpdate("Update version set version = "+ (vers+1)+" where name like '"+table+"'");
+			con.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
