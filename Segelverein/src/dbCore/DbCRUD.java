@@ -44,6 +44,7 @@ public class DbCRUD {
 	}
 	public DbCRUD(String host, int port, String datenbank, String username, String password) {
 		this.dsn = "jdbc:postgresql://"+host+":"+port+"/"+datenbank+"?user="+username+"&password="+password;
+//		System.err.println(dsn);
 		try {
 			Class.forName(JDBC);
 			con = DriverManager.getConnection(dsn);

@@ -45,14 +45,14 @@ public class Segelverein {
 		
 		GnuParser gParser = new GnuParser();
 		Options o = new Options();
-		o.addOption(new Option("-h", true, "Host"));
-		o.addOption(new Option("-p",true, "Port"));
-		o.addOption("-d", true, "Databasename");
-		o.addOption(new Option("-u", "Username"));
-		o.addOption("-w", true, "Password");
+		o.addOption(new Option("h", true, "Host"));
+		o.addOption(new Option("p",true, "Port"));
+		o.addOption("d", true, "Databasename");
+		o.addOption(new Option("u",true, "Username"));
+		o.addOption("w", true, "Password");
 		try {
 			CommandLine cl= gParser.parse(o, args);
-			new Segelverein(cl.getOptionValue("-h", "127.0.0.1"),Integer.parseInt(cl.getOptionValue("-p", "5432")), cl.getOptionValue("-d","segelverein"), cl.getOptionValue("-u", "segelverein"),cl.getOptionValue("-W", "segelverein"));
+			new Segelverein(cl.getOptionValue("h", "127.0.0.1"),Integer.parseInt(cl.getOptionValue("p", "5432")), cl.getOptionValue("d","segelverein"), cl.getOptionValue("u", "segelverein"),cl.getOptionValue("w", "segelverein"));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
