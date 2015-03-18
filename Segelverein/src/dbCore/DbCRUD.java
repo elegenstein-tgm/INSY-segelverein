@@ -42,6 +42,18 @@ public class DbCRUD {
 			e.printStackTrace();
 		}
 	}
+	public DbCRUD(String host, int port, String datenbank, String username, String password) {
+		this.dsn = "jdbc:postgresql://"+host+":"+port+"/"+datenbank+"?user="+username+"&password="+password;
+		try {
+			Class.forName(JDBC);
+			con = DriverManager.getConnection(dsn);
+		} catch (ClassNotFoundException e) {
+			System.err.println("Make sure that Postgre-Connectors are available");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public String[][] selectALL(String tablename) {
 		ArrayList<String[]> bettBlocka = new ArrayList<>();

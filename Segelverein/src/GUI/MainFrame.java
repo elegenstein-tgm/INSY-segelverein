@@ -42,7 +42,7 @@ public class MainFrame extends JFrame {
 					MainFrame frame = new MainFrame(new String[] { "boot",
 							"bildet", "mannschaft", "nimmt_teil", "person","trainer","segler",
 							"regatta", "sportboot", "tourenboot", "wettfahrt",
-							"zugewiesen", "erzielt" });
+							"zugewiesen", "erzielt" }, new DbCRUD("jdbc:postgresql://192.168.5.3/segelverein?user=erik&password=abcc1233"));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,7 +51,8 @@ public class MainFrame extends JFrame {
 		});
 	}
 
-	public MainFrame(String[] tmp) {
+	public MainFrame(String[] tmp,DbCRUD a) {
+		crud = a;
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 667, 541);
