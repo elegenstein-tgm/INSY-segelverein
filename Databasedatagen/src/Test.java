@@ -22,8 +22,8 @@ public class Test {
 //		genWettfahrt();
 //		genBildet();
 //		genZugewiesen();
-//		genNT();
-		genErzielt();
+		genNT();
+//		genErzielt();
 		
 	}
 	/**
@@ -39,6 +39,8 @@ public class Test {
 	public static void genNT() {
 		NimmtTeil nt = new NimmtTeil();
 		nt.dos();
+		nt.getnt();
+		System.err.println("geht");
 		new WriteInserts(new String[]{"mname","rname","rjahr","sportboot","startnr"}, nt.getnt()[0], "nimmt_teil");
 	}
 	

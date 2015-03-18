@@ -1,4 +1,3 @@
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,6 +20,7 @@ public class WriteInserts {
 				zzz += ", " + colnames[i];
 		}
 		zzz+=") VALUES ";
+		System.err.println(colvals[0].length);
 		for(int i = 0; i < colvals[0].length; i ++){
 			if(i != 0)
 				zzz += ","; 

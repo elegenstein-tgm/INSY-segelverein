@@ -31,11 +31,11 @@ public class NimmtTeil {
 			while(rs.next()){
 				mname.add(""+rs.getString(1)+"");
 			}
-			for(int i = 0; i <5000;i++){
+			for(int i = 0; i <4999;i++){
 				mname.add(mname.get(0));
 				mname.add(mname.get(1));
 			}
-			rs = con.createStatement().executeQuery("select name, jahr from regatta LIMIT 5000");
+			rs = con.createStatement().executeQuery("select name, jahr from regatta");
 			while(rs.next()){
 				rname.add("'"+rs.getString(1)+"'");
 				rjahr.add(""+rs.getInt(2));
@@ -44,7 +44,7 @@ public class NimmtTeil {
 			}
 			rs = con.createStatement().executeQuery("select id from sportboot");
 			while(rs.next()){
-				rname.add(rs.getString(1));
+				sportboot.add(rs.getString(1));
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -61,12 +61,9 @@ public class NimmtTeil {
 		tmp[0][1] = rname.toArray(tmp[0][1]);
 		tmp[0][2] = rjahr.toArray(tmp[0][2]);
 		tmp[0][3] = sportboot.toArray(tmp[0][3]);
-		for(int i = 0,j=1; i < 10000; )
-			while(i< 10000 && j <= 100){
-				tmp[0][4][i] = ""+j;
-				j++;
-				i++;
-			}
+		for(int i = 0; i < 10000; i++)
+				tmp[0][4][i] = ""+(i+1)%100;
+
 		return tmp;
 	}
 }
